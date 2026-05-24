@@ -35,7 +35,7 @@
         "url": "{{base_url}}/auth/login",
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"email\": \"smith@schoollink.dev\",\n  \"password\": \"Teacher123!\"\n}"
+          "raw": "{\n  \"email\": \"smith@schoollink.dev\",\n  \"password\": \"Sl#Smith2026dev\"\n}"
         }
       }
     },
@@ -61,7 +61,7 @@
         "url": "{{base_url}}/auth/login",
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"email\": \"johnson@schoollink.dev\",\n  \"password\": \"Admin1234!\"\n}"
+          "raw": "{\n  \"email\": \"johnson@schoollink.dev\",\n  \"password\": \"Sl#Admin2026dev\"\n}"
         }
       }
     },

@@ -38,7 +38,7 @@ Staff authenticate via JWT. **staffId is never in a URL** — it lives inside th
 POST /auth/login
 Content-Type: application/json
 
-{ "email": "smith@schoollink.dev", "password": "Teacher123!" }
+{ "email": "smith@schoollink.dev", "password": "Sl#Smith2026dev" }
 ```
 
 ```json
@@ -58,9 +58,9 @@ Authorization: Bearer <token>
 
 | Name        | Email                     | Password   | Role    |
 |-------------|---------------------------|------------|---------|
-| Mrs Smith   | smith@schoollink.dev      | Teacher123! | teacher |
-| Mr Okafor   | okafor@schoollink.dev     | Teacher123! | teacher |
-| Ms Johnson  | johnson@schoollink.dev    | Admin1234!  | admin   |
+| Mrs Smith   | smith@schoollink.dev      | Sl#Smith2026dev  | teacher |
+| Mr Okafor   | okafor@schoollink.dev     | Sl#Okafor2026dev | teacher |
+| Ms Johnson  | johnson@schoollink.dev    | Sl#Admin2026dev  | admin   |
 
 ---
 

@@ -3,9 +3,10 @@ const express = require('express');
 const { initSchema } = require('./db');
 
 const { verifyToken } = require('./middleware/auth');
-const authRoutes     = require('./routes/auth');
-const registerRoutes = require('./routes/register');
-const adminRoutes    = require('./routes/admin');
+const authRoutes      = require('./routes/auth');
+const registerRoutes  = require('./routes/register');
+const adminRoutes     = require('./routes/admin');
+const timetableRoutes = require('./routes/timetable');
 
 const app  = express();
 const PORT = process.env.API_PORT || 3000;
@@ -17,9 +18,10 @@ app.use(express.json());
 // GET  /register                — teacher fetches their register (was /:staffId)
 // POST /register/submit         — teacher submits marks      (was /:staffId/submit)
 // GET  /admin/dashboard         — admin overview             (was /dashboard/:adminId)
-app.use('/auth',     authRoutes);
-app.use('/register', verifyToken, registerRoutes);
-app.use('/admin',    verifyToken, adminRoutes);
+app.use('/auth',      authRoutes);
+app.use('/timetable', verifyToken, timetableRoutes);
+app.use('/register',  verifyToken, registerRoutes);
+app.use('/admin',     verifyToken, adminRoutes);
 
 // Health check
 app.get('/health', (_, res) => res.json({ status: 'ok' }));

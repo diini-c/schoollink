@@ -77,20 +77,22 @@ router.get('/dashboard', async (req, res) => {
       else                       status = 'not_done';
 
       return {
-        class: a.class_name,
-        subject: a.subject,
-        teacher: a.teacher_name,
-        sessionTime: a.session_time,
-        status,
-        overdue: isOverdue,
-        submittedAt: reg?.submitted_at || null,
-        synced: reg?.synced ?? null,
-        summary: reg ? {
-          total:   parseInt(reg.total_marks),
-          present: parseInt(reg.present_count),
-          absent:  parseInt(reg.absent_count),
-          late:    parseInt(reg.late_count),
-        } : null,
+        register: {
+          class:       a.class_name,
+          subject:     a.subject,
+          teacher:     a.teacher_name,
+          sessionTime: a.session_time,
+          status,           // done | not_done | overdue | offline_pending | upcoming
+          overdue:     isOverdue,
+          submittedAt: reg?.submitted_at || null,
+          synced:      reg?.synced ?? null,
+          summary: reg ? {
+            total:   parseInt(reg.total_marks),
+            present: parseInt(reg.present_count),
+            absent:  parseInt(reg.absent_count),
+            late:    parseInt(reg.late_count),
+          } : null,
+        }
       };
     });
 

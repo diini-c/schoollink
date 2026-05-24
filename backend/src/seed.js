@@ -23,6 +23,8 @@ const DUMMY_PUPILS = [
   { name: 'Elliot Fraser',     year: 8, class: '8B' },
 ];
 
+// DEV SEED CREDENTIALS ONLY — WorkOS test environment, never used in production.
+// Real staff accounts are created through the admin dashboard (Slice 2).
 const DUMMY_STAFF = [
   { name: 'Mrs Smith',  firstName: 'Mrs', lastName: 'Smith',   role: 'teacher', email: 'smith@schoollink.dev',   password: 'Teacher123!' },
   { name: 'Mr Okafor',  firstName: 'Mr',  lastName: 'Okafor',  role: 'teacher', email: 'okafor@schoollink.dev',  password: 'Teacher123!' },

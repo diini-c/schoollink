@@ -15,7 +15,8 @@ git clone https://github.com/diini-c/schoollink.git
 cd schoollink
 
 # Add .env (see .env.example or ask founder — never committed)
-# Must include: DB_USER, DB_PASSWORD, DB_NAME, DB_HOST, DB_PORT, API_PORT, JWT_SECRET
+# Must include: DB_USER, DB_PASSWORD, DB_NAME, DB_HOST, DB_PORT, API_PORT, WORKOS_API_KEY, WORKOS_CLIENT_ID
+# Copy .env.example → .env and fill in values. Never commit .env.
 
 docker compose up --build -d
 
@@ -37,7 +38,7 @@ Staff authenticate via JWT. **staffId is never in a URL** — it lives inside th
 POST /auth/login
 Content-Type: application/json
 
-{ "email": "smith@schoollink.dev", "password": "teacher123" }
+{ "email": "smith@schoollink.dev", "password": "Teacher123!" }
 ```
 
 ```json
@@ -57,9 +58,9 @@ Authorization: Bearer <token>
 
 | Name        | Email                     | Password   | Role    |
 |-------------|---------------------------|------------|---------|
-| Mrs Smith   | smith@schoollink.dev      | teacher123 | teacher |
-| Mr Okafor   | okafor@schoollink.dev     | teacher123 | teacher |
-| Ms Johnson  | johnson@schoollink.dev    | admin123   | admin   |
+| Mrs Smith   | smith@schoollink.dev      | Teacher123! | teacher |
+| Mr Okafor   | okafor@schoollink.dev     | Teacher123! | teacher |
+| Ms Johnson  | johnson@schoollink.dev    | Admin1234!  | admin   |
 
 ---
 

@@ -7,8 +7,8 @@ const { pool } = require('../db');
 // Admin sees all registers for a given date
 // Status: done / not_done / offline_pending / overdue
 // ─────────────────────────────────────────────
-router.get('/dashboard/:adminId', async (req, res) => {
-  const { adminId } = req.params;
+router.get('/dashboard', async (req, res) => {
+  const adminId = req.user.staffId;   // from verified JWT — never from URL
   const { date } = req.query;
   const sessionDate = date || new Date().toISOString().split('T')[0];
   const OVERDUE_MINUTES = 10;

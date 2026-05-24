@@ -1,6 +1,9 @@
 require('dotenv').config();
+const { WorkOS } = require('@workos-inc/node');
 const { pool, initSchema } = require('./db');
 const { v4: uuidv4 } = require('uuid');
+
+const workos = new WorkOS(process.env.WORKOS_API_KEY);
 
 const DUMMY_PUPILS = [
   { name: 'Tyrique Johnson',   year: 7, class: '7A' },
@@ -21,9 +24,9 @@ const DUMMY_PUPILS = [
 ];
 
 const DUMMY_STAFF = [
-  { name: 'Mrs Smith',   role: 'teacher' },
-  { name: 'Mr Okafor',   role: 'teacher' },
-  { name: 'Ms Johnson',  role: 'admin'   },
+  { name: 'Mrs Smith',  firstName: 'Mrs', lastName: 'Smith',   role: 'teacher', email: 'smith@schoollink.dev',   password: 'Teacher123!' },
+  { name: 'Mr Okafor',  firstName: 'Mr',  lastName: 'Okafor',  role: 'teacher', email: 'okafor@schoollink.dev',  password: 'Teacher123!' },
+  { name: 'Ms Johnson', firstName: 'Ms',  lastName: 'Johnson', role: 'admin',   email: 'johnson@schoollink.dev', password: 'Admin1234!'  },
 ];
 
 // Class assignments: Mrs Smith teaches 7A, Mr Okafor teaches 8B
@@ -47,15 +50,39 @@ async function seed() {
     await pool.query('DELETE FROM pupils');
     await pool.query('DELETE FROM staff');
 
-    // Seed staff
-    console.log('Seeding staff...');
+    // Seed staff — create in WorkOS, link workos_user_id to local staff record
+    console.log('Seeding staff in WorkOS and local DB...');
     const staffMap = {};
     for (const s of DUMMY_STAFF) {
       const id = uuidv4();
       staffMap[s.name] = id;
+
+      // Create or retrieve WorkOS user
+      let workosUserId;
+      try {
+        const workosUser = await workos.userManagement.createUser({
+          email:         s.email,
+          password:      s.password,
+          firstName:     s.firstName,
+          lastName:      s.lastName,
+          emailVerified: true,
+        });
+        workosUserId = workosUser.id;
+        console.log(`  ✓ WorkOS user created: ${s.email}`);
+      } catch (err) {
+        if (err.rawData?.code === 'user_already_exists') {
+          // User exists — find them by email
+          const { data } = await workos.userManagement.listUsers({ email: s.email });
+          workosUserId = data[0].id;
+          console.log(`  ~ WorkOS user already exists: ${s.email}`);
+        } else {
+          throw err;
+        }
+      }
+
       await pool.query(
-        'INSERT INTO staff (id, full_name, role) VALUES ($1, $2, $3)',
-        [id, s.name, s.role]
+        'INSERT INTO staff (id, full_name, role, workos_user_id) VALUES ($1, $2, $3, $4)',
+        [id, s.name, s.role, workosUserId]
       );
     }
 
@@ -86,10 +113,9 @@ async function seed() {
       );
     }
 
-    console.log('\nSeed complete.');
-    console.log('Staff IDs (use these to test the API):');
-    for (const [name, id] of Object.entries(staffMap)) {
-      console.log(`  ${name}: ${id}`);
+    console.log('\nSeed complete. Login credentials:');
+    for (const s of DUMMY_STAFF) {
+      console.log(`  ${s.name.padEnd(12)} ${s.email.padEnd(28)} / ${s.password}`);
     }
 
   } catch (err) {

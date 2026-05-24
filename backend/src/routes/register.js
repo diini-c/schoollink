@@ -10,10 +10,14 @@ const { v4: uuidv4 } = require('uuid');
 // has a class assignment — standing access check
 // Every resolution is written to the audit log
 // ─────────────────────────────────────────────
-router.get('/:staffId', async (req, res) => {
-  const { staffId } = req.params;
+router.get('/', async (req, res) => {
+  const { staffId } = req.user;   // from verified JWT — never from URL
   const { date, class: className } = req.query;
   const sessionDate = date || new Date().toISOString().split('T')[0];
+
+  if (!className) {
+    return res.status(400).json({ error: 'Missing required query param: class' });
+  }
 
   try {
     // Verify this staff member exists
@@ -117,8 +121,8 @@ router.get('/:staffId', async (req, res) => {
 // Accepts online submission and offline sync (synced flag)
 // Body: { class, date, sessionTime, marks: [{token, status, note}], synced }
 // ─────────────────────────────────────────────
-router.post('/:staffId/submit', async (req, res) => {
-  const { staffId } = req.params;
+router.post('/submit', async (req, res) => {
+  const { staffId } = req.user;   // from verified JWT — never from URL
   const { class: className, date, sessionTime, marks, synced = true } = req.body;
 
   if (!className || !date || !sessionTime || !marks || !Array.isArray(marks)) {

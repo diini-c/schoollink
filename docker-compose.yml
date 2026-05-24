@@ -31,6 +31,8 @@ services:
       DB_HOST: db
       DB_PORT: 5432
       API_PORT: ${API_PORT}
+      WORKOS_API_KEY: ${WORKOS_API_KEY}
+      WORKOS_CLIENT_ID: ${WORKOS_CLIENT_ID}
     ports:
       - "${API_PORT}:${API_PORT}"
     volumes:

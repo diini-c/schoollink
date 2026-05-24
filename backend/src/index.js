@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const { initSchema } = require('./db');
 
+const { verifyToken } = require('./middleware/auth');
+const authRoutes     = require('./routes/auth');
 const registerRoutes = require('./routes/register');
 const adminRoutes    = require('./routes/admin');
 
@@ -11,11 +13,13 @@ const PORT = process.env.API_PORT || 3000;
 app.use(express.json());
 
 // ── Routes ──────────────────────────────────
-// /register/:staffId          GET  — fetch register (resolves tokens to names)
-// /register/:staffId/submit   POST — submit or sync register
-// /admin/dashboard/:adminId   GET  — admin overview of all registers
-app.use('/register', registerRoutes);
-app.use('/admin',    adminRoutes);
+// POST /auth/login              — public, issues JWT
+// GET  /register                — teacher fetches their register (was /:staffId)
+// POST /register/submit         — teacher submits marks      (was /:staffId/submit)
+// GET  /admin/dashboard         — admin overview             (was /dashboard/:adminId)
+app.use('/auth',     authRoutes);
+app.use('/register', verifyToken, registerRoutes);
+app.use('/admin',    verifyToken, adminRoutes);
 
 // Health check
 app.get('/health', (_, res) => res.json({ status: 'ok' }));

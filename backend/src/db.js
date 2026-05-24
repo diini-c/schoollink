@@ -36,6 +36,7 @@ async function initSchema() {
       id UUID PRIMARY KEY,
       full_name TEXT NOT NULL,
       role TEXT NOT NULL CHECK (role IN ('teacher', 'admin', 'head_of_year', 'ta')),
+      workos_user_id TEXT UNIQUE,
       created_at TIMESTAMPTZ DEFAULT NOW()
     );
 
@@ -86,6 +87,11 @@ async function initSchema() {
       created_at TIMESTAMPTZ DEFAULT NOW()
     );
 
+  `);
+
+  // WorkOS auth column — safe to run against an existing DB (idempotent)
+  await pool.query(`
+    ALTER TABLE staff ADD COLUMN IF NOT EXISTS workos_user_id TEXT UNIQUE;
   `);
 
   console.log('Schema ready.');

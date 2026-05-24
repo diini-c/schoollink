@@ -1,0 +1,129 @@
+{
+  "info": {
+    "name": "SchoolLink API",
+    "_postman_id": "schoollink-auth-v1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Auth-gated API. Run '1. Login' first — token is saved automatically and used by every other request."
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:3000" },
+    { "key": "token",    "value": "" },
+    { "key": "date",     "value": "2026-05-21" }
+  ],
+  "item": [
+    {
+      "name": "1. Login (teacher — Mrs Smith)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.accessToken) {",
+              "  pm.collectionVariables.set('token', json.accessToken);",
+              "  console.log('Token saved:', json.staff.email);",
+              "} else {",
+              "  console.error('Login failed:', JSON.stringify(json));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base_url}}/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"smith@schoollink.dev\",\n  \"password\": \"Teacher123!\"\n}"
+        }
+      }
+    },
+    {
+      "name": "1b. Login (admin — Ms Johnson)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.accessToken) {",
+              "  pm.collectionVariables.set('token', json.accessToken);",
+              "  console.log('Token saved:', json.staff.email);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base_url}}/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"johnson@schoollink.dev\",\n  \"password\": \"Admin1234!\"\n}"
+        }
+      }
+    },
+    {
+      "name": "2. GET register (Mrs Smith → 7A)",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": {
+          "raw": "{{base_url}}/register?class=7A&date={{date}}",
+          "host": ["{{base_url}}"],
+          "path": ["register"],
+          "query": [
+            { "key": "class", "value": "7A" },
+            { "key": "date",  "value": "{{date}}" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "3. POST submit register (Mrs Smith → 7A)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type",  "value": "application/json" }
+        ],
+        "url": "{{base_url}}/register/submit",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"class\": \"7A\",\n  \"date\": \"{{date}}\",\n  \"sessionTime\": \"09:00:00\",\n  \"synced\": true,\n  \"marks\": [\n    { \"token\": \"REPLACE_WITH_TOKEN_FROM_GET_REGISTER\", \"status\": \"present\", \"note\": null }\n  ]\n}"
+        }
+      }
+    },
+    {
+      "name": "4. GET admin dashboard",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": {
+          "raw": "{{base_url}}/admin/dashboard?date={{date}}",
+          "host": ["{{base_url}}"],
+          "path": ["admin", "dashboard"],
+          "query": [{ "key": "date", "value": "{{date}}" }]
+        }
+      }
+    },
+    {
+      "name": "5. No token — expect 401",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/register?class=7A"
+      }
+    },
+    {
+      "name": "6. Bad token — expect 403",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer thisisnotavalidtoken" }],
+        "url": "{{base_url}}/register?class=7A"
+      }
+    }
+  ]
+}
